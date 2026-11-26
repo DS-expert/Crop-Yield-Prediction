@@ -1,0 +1,15 @@
+# Data Paths
+
+---
+
+paths:
+  raw_data: "data/raw/crop_yield.csv"
+  preprocessed_dir: "data/preprocessed"
+  model: "model"
+  output: "output"
+
+data:
+  test_size: 0.2
+  random_state: 42
+
+...
