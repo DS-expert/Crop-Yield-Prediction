@@ -2,6 +2,10 @@
 import pandas as pd
 import numpy as np
 from feature_engine.outliers import ArbitraryOutlierCapper
+from src.utils.config import load_config
+from sklearn.model_selection import train_test_split
+
+config = load_config()
 
 def load_dataset(file_path: str) -> pd.DataFrame:
     """
@@ -89,3 +93,28 @@ def remove_outliers(df):
     df_capped = capper.fit_transform(df)
 
     return df_capped
+
+def split_dataset(df, target=config["data"]["target_feature"]):
+    X = df.drop(columns=["target"])
+    y = df[target]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, 
+                                                        test_size=config["data"]["test_size"], 
+                                                        random_state=config["data"]["random_state"])
+    return X_train, X_test, y_train, y_test
+
+def validate_set(train_set, train_label):
+    """
+    In this function, we split the train set into validate set
+
+    args:
+        train_set: training input feature of dataset.
+        train_label: training label of dataset
+    
+    return:
+        X_train, X_val, y_train, y_val : training and Validation set of feature and labels
+    """
+
+    X_train, X_val, y_train, y_val = train_test_split(train_set, train_label, 
+                                                      test_size=config["data"]["test_size"],
+                                                      random_state=config["data"]["random_state"])
+    return X_train, X_val, y_train, y_val
