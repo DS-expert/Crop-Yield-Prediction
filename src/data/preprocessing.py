@@ -1,6 +1,7 @@
 
 import pandas as pd
 import numpy as np
+from feature_engine.outliers import ArbitraryOutlierCapper
 
 def load_dataset(file_path: str) -> pd.DataFrame:
     """
@@ -69,3 +70,22 @@ def IQR_boundries(df, feature):
     upper_boundry = q3 + 1.5 * IQR
 
     return lower_boundry, upper_boundry
+
+def remove_outliers(df):
+    lower_boundry_dict = {}
+    upper_boundry_dict = {}
+    num_features = df.select_dtypes(include="number").columns.tolist()
+
+    for feature in num_features:
+        lower_boundry_, upper_boundry_ = IQR_boundries(df, feature)
+        lower_boundry_dict[feature] = lower_boundry_
+        upper_boundry_dict[feature] = upper_boundry_
+
+    capper = ArbitraryOutlierCapper(
+        min_capping_dict=lower_boundry_dict,
+        max_capping_dict=upper_boundry_dict
+    )
+
+    df_capped = capper.fit_transform(df)
+
+    return df_capped
