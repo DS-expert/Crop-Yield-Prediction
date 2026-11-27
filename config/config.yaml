@@ -11,7 +11,8 @@ paths:
   y_train_path: "data/preprocessed/y_train.joblib"
   y_test_path: "data/preprocessed/y_test.joblib"
   y_val_path: "data/preprocessed/y_val.joblib"
-  model: "model"
+  model_dir: "model"
+  model_path: "model/best_model.pkl"
   output: "output"
 
 data:
