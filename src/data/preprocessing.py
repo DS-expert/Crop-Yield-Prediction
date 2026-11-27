@@ -32,3 +32,19 @@ def convert_dtypes(df: pd.DataFrame, columns: list, dtype) -> pd.DataFrame:
         df[feature] = df[feature].astype(dtype)
 
     return df
+
+def handle_missing_value(df):
+
+    if df.isnull().sum().sum() == 0:
+        return df
+
+    missing_features = df.columns[df.isna().any()].tolist()
+
+    for feature in missing_features:
+        df[f"{feature}_missing"] = df[feature].isna().astype(int)
+        if df[feature].dtypes in [int, float]:
+            df[feature] = df[feature].fillna(df[feature].mean())
+        else:
+            df[feature] = df[feature].fillna("missing")
+
+    return df
