@@ -5,11 +5,17 @@
 paths:
   raw_data: "data/raw/crop_yield.csv"
   preprocessed_dir: "data/preprocessed"
+  X_train_path: "data/preprocessed/X_train.joblib"
+  X_test_path: "data/preprocessed/X_test.joblib"
+  X_val_path: "data/preprocessed/X_val.joblib"
+  y_train_path: "data/preprocessed/y_train.joblib"
+  y_test_path: "data/preprocessed/y_test.joblib"
+  y_val_path: "data/preprocessed/y_val.joblib"
   model: "model"
   output: "output"
 
 data:
   test_size: 0.2
   random_state: 42
-
+  target_feature: "Yield"
 ...

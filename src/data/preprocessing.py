@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from category_encoders import TargetEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+import joblib
 
 config = load_config()
 
@@ -177,3 +178,12 @@ def preprocessor(train_set, test_set, num_features: list, cat_features: list):
 
     return train_set_preprocessed, test_set_preprocessed
 
+def save_preprocessed_set(train_set, train_label, test_set, test_label, val_set=None, val_label=None):
+    if val_set and val_label:
+        joblib.dump(val_set, config["paths"]["X_val_path"])
+        joblib.dump(val_label, config["paths"]["y_val_path"])
+
+    joblib.dump(train_label, config["paths"]["y_train_path"])
+    joblib.dump(train_set, config["paths"]["X_train_path"])
+    joblib.dump(test_set, config["paths"]["X_test_path"])
+    joblib.dump(test_label, config["paths"]["y_test_path"])
