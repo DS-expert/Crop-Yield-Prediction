@@ -5,6 +5,8 @@ from feature_engine.outliers import ArbitraryOutlierCapper
 from src.utils.config import load_config
 from sklearn.model_selection import train_test_split
 from category_encoders import TargetEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 config = load_config()
 
@@ -152,3 +154,26 @@ def target_encoder(train_set: pd.DataFrame, test_set:pd.DataFrame, train_label: 
     test_set_ = test_set.drop(columns=features)
 
     return train_set_, test_set_
+
+def preprocessor(train_set, test_set, num_features: list, cat_features: list):
+    """
+    In this preprocessor, It will apply scaling and encoding on features.
+    args:
+        train_set: Train dataset to apply preprocesser
+        test_set: test dataset for transform the preprocesser
+    returns:
+        train_set, test_set: Return preprocessed datasets
+    """
+
+    transformer = ColumnTransformer(
+        transformers=[
+            ("Scaling", StandardScaler(), num_features),
+            ("Encoding", OneHotEncoder(handle_unknown="ignore", sparse_output=False), cat_features)
+        ], remainder="passthrough"
+    )
+
+    train_set_preprocessed = transformer.fit_transform(train_set)
+    test_set_preprocessed = transformer.transform(test_set)
+
+    return train_set_preprocessed, test_set_preprocessed
+
