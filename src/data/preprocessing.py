@@ -48,3 +48,24 @@ def handle_missing_value(df):
             df[feature] = df[feature].fillna("missing")
 
     return df
+
+def IQR_boundries(df, feature):
+    """
+    This function is to find the lower boundries and upper boundries of features in dataframe.
+
+    args:
+        df(pd.DataFrame): Dataframe in which those feature are in.
+        feature(str): Feature name on which you want to find boundires.
+    return:
+        lower_boundries, upper_boundrie : Value of boundries of given feature.
+    """
+
+    q1 = df[feature].quantile(0.25)
+    q3 = df[feature].quantile(0.75)
+
+    IQR = q3 - q1
+
+    lower_boundry = q1 - 1.5 * IQR
+    upper_boundry = q3 + 1.5 * IQR
+
+    return lower_boundry, upper_boundry
