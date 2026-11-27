@@ -4,6 +4,7 @@ import numpy as np
 from feature_engine.outliers import ArbitraryOutlierCapper
 from src.utils.config import load_config
 from sklearn.model_selection import train_test_split
+from category_encoders import TargetEncoder
 
 config = load_config()
 
@@ -118,3 +119,36 @@ def validate_set(train_set, train_label):
                                                       test_size=config["data"]["test_size"],
                                                       random_state=config["data"]["random_state"])
     return X_train, X_val, y_train, y_val
+
+def target_encoder(train_set: pd.DataFrame, test_set:pd.DataFrame, train_label: pd.DataFrame, features: list, smoothing=10, min_samples_leaf=20):
+    """
+    In this function, it convert the categorical feature with average value of target labels.
+
+    args:
+        train_set(pd.DataFrame): Dataframe of training features.
+        test_set(pd.DataFrame): Dataframe of test features.
+        train_label(pd.Series): Series of training labels.
+        feature: Given feature on which to perform target_encoder.
+        smoothing(int): Prevent overfitting on high cardinality or rare categoircal features.
+        min_samples_lead(int): Prevent overfitting on low frequency or rate categorical features.
+    returns:
+        train_set, test_set: train and test set with encoded of given features.
+    """
+
+    encoder = TargetEncoder(
+        cols=features,
+        smoothing=smoothing,
+        min_samples_leaf=min_samples_leaf
+    )
+
+    encoded_features = []
+    for feature in features:
+        encoded_features.append(f"{feature}_encoded")
+
+    train_set[encoded_features] = encoder.fit_transform(train_set[features], train_label)
+    test_set[encoded_features] = encoder.transform(test_set[features])
+
+    train_set_ = train_set.drop(columns=features)
+    test_set_ = test_set.drop(columns=features)
+
+    return train_set_, test_set_
